@@ -10,6 +10,8 @@ import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
 
 public class Cuenta {
+    private static final int cantidadMaximaDepositosDiarios = 3;
+    private static final int maximoExtraccionDiario = 1000;
 
     private List<Movimiento> movimientos = new ArrayList<>();
 
@@ -18,8 +20,8 @@ public class Cuenta {
             throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
         }
 
-        if (getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count() >= 3) {
-            throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
+        if (getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count() >= cantidadMaximaDepositosDiarios) {
+            throw new MaximaCantidadDepositosException("Ya excedio los " + cantidadMaximaDepositosDiarios + " depositos diarios");
         }
 
         new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
@@ -33,9 +35,9 @@ public class Cuenta {
             throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
         }
         double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
-        double limite = 1000 - montoExtraidoHoy;
+        double limite = maximoExtraccionDiario - montoExtraidoHoy;
         if (cuanto > limite) {
-            throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
+            throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + maximoExtraccionDiario
                     + " diarios, límite: " + limite);
         }
         new Movimiento(LocalDate.now(), -cuanto, false).agregateA(this);
