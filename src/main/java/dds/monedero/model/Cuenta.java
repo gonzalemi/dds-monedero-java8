@@ -12,9 +12,6 @@ import dds.monedero.exceptions.SaldoMenorException;
 public class Cuenta {
 
     private List<Movimiento> movimientos = new ArrayList<>();
- public void setMovimientos(List<Movimiento> movimientos) {
-    this.movimientos = movimientos;
-  }
 
     public void poner(double cuanto) {
         if (cuanto <= 0) {
