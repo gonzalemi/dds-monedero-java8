@@ -3,36 +3,39 @@ package dds.monedero.model;
 import java.time.LocalDate;
 
 public class Movimiento {
-  private LocalDate fecha;
-  //En ningún lenguaje de programación usen jamás doubles para modelar dinero en el mundo real
-  //siempre usen numeros de precision arbitraria, como BigDecimal en Java y similares
-  private double monto;
-  private boolean esDeposito;
+    private LocalDate fecha;
+    //En ningún lenguaje de programación usen jamás doubles para modelar dinero en el mundo real
+    //siempre usen numeros de precision arbitraria, como BigDecimal en Java y similares
+    private double monto;
+    private TipoDeMovimiento tipo;
 
-  public Movimiento(LocalDate fecha, double monto, boolean esDeposito) {
-    this.fecha = fecha;
-    this.monto = monto;
-    this.esDeposito = esDeposito;
-  }
+    public Movimiento(LocalDate fecha, double monto, TipoDeMovimiento tipo) {
+        this.fecha = fecha;
+        this.monto = monto;
+        this.tipo = tipo;
+    }
 
-  public double getMonto() {
-    return monto;
-  }
+    public double getMonto() {
+        return monto;
+    }
 
-  public LocalDate getFecha() {
-    return fecha;
-  }
+    public LocalDate getFecha() {
+        return fecha;
+    }
 
-  public boolean esDeLaFecha(LocalDate fecha) {
-    return this.fecha.equals(fecha);
-  }
+    public boolean esDeLaFecha(LocalDate fecha) {
+        return this.fecha.equals(fecha);
+    }
 
-  public boolean isDeposito() {
-    return esDeposito;
-  }
+    public TipoDeMovimiento getTipo() {
+        return tipo;
+    }
 
-  public boolean isExtraccion() {
-    return !esDeposito;
-  }
+    public boolean esDeposito() {
+        return this.tipo == TipoDeMovimiento.DEPOSITO;
+    }
 
+    public boolean esExtraccionEnFecha(LocalDate fecha) {
+        return this.tipo == TipoDeMovimiento.EXTRACCION && this.esDeLaFecha(fecha);
+    }
 }
