@@ -35,7 +35,4 @@ public class Movimiento {
     return !esDeposito;
   }
 
-  public void agregateA(Cuenta cuenta) {
-     cuenta.agregarMovimiento(fecha, monto, esDeposito);
-  }
 }
