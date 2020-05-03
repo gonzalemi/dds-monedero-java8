@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import dds.monedero.exceptions.MaximaCantidadDepositosException;
+import dds.monedero.exceptions.MaximaCantidadDepositosDiariosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
@@ -14,7 +14,7 @@ public class Cuenta {
     private static final int cantidadMaximaDepositosDiarios = 3;
     private static final int maximoExtraccionDiario = 1000;
 
-    private List<Movimiento> movimientos = new ArrayList<>();
+    private final List<Movimiento> movimientos = new ArrayList<>();
 
     private void validarMontoNegativo(double monto) {
         if (monto <= 0) {
@@ -23,8 +23,9 @@ public class Cuenta {
     }
 
     private void validarCantidadDeDepositosDiarios() {
+
         if (cantidadDeDepositosA(LocalDate.now()) >= cantidadMaximaDepositosDiarios) {
-            throw new MaximaCantidadDepositosException("Ya excedio los " + cantidadMaximaDepositosDiarios + " depositos diarios");
+            throw new MaximaCantidadDepositosDiariosException("Ya excedio los " + cantidadMaximaDepositosDiarios + " depositos diarios");
         }
     }
 
@@ -57,7 +58,7 @@ public class Cuenta {
         validarSuficienciaDeSaldo(montoExtraccion);
         validarMontoMaximoDeExtraccionDiario(montoExtraccion);
 
-        agregarMovimiento(LocalDate.now(), montoExtraccion, TipoDeMovimiento.EXTRACCION);
+        agregarMovimiento(LocalDate.now(), -montoExtraccion, TipoDeMovimiento.EXTRACCION);
     }
 
     public void agregarMovimiento(LocalDate fecha, double cuanto, TipoDeMovimiento tipo) {
