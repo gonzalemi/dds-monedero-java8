@@ -3,6 +3,7 @@ package dds.monedero.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
@@ -22,7 +23,7 @@ public class Cuenta {
     }
 
     private void validarCantidadDeDepositosDiarios() {
-        if (getMovimientos().stream().filter(Movimiento::esDeposito).count() >= cantidadMaximaDepositosDiarios) {
+        if (cantidadDeDepositosA(LocalDate.now()) >= cantidadMaximaDepositosDiarios) {
             throw new MaximaCantidadDepositosException("Ya excedio los " + cantidadMaximaDepositosDiarios + " depositos diarios");
         }
     }
@@ -36,8 +37,7 @@ public class Cuenta {
     }
 
     private void validarMontoMaximoDeExtraccionDiario(double monto) {
-        double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
-        double limite = maximoExtraccionDiario - montoExtraidoHoy;
+        double limite = maximoExtraccionDiario - getMontoExtraidoA(LocalDate.now());
 
         if (monto > limite) {
             throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + maximoExtraccionDiario
@@ -49,7 +49,7 @@ public class Cuenta {
         validarMontoNegativo(cuanto);
         validarCantidadDeDepositosDiarios();
 
-        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.DEPOSITO );
+        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.DEPOSITO);
     }
 
     public void sacar(double cuanto) {
@@ -57,7 +57,7 @@ public class Cuenta {
         validarSuficienciaDeSaldo(cuanto);
         validarMontoMaximoDeExtraccionDiario(cuanto);
 
-        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.EXTRACCION );
+        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.EXTRACCION);
     }
 
     public void agregarMovimiento(LocalDate fecha, double cuanto, TipoDeMovimiento tipo) {
@@ -65,11 +65,23 @@ public class Cuenta {
         movimientos.add(movimiento);
     }
 
-    public double getMontoExtraidoA(LocalDate fecha) {
+    public List<Movimiento> getMovimientosSegun(LocalDate fecha, TipoDeMovimiento tipo) {
         return movimientos.stream()
-                .filter(movimiento -> movimiento.esExtraccionEnFecha(fecha))
+                .filter(movimiento -> movimiento.esDeTipoYFecha(tipo, fecha))
+                .collect(Collectors.toList());
+    }
+
+    public double getMontoExtraidoA(LocalDate fecha) {
+        return getMovimientosSegun(fecha, TipoDeMovimiento.EXTRACCION)
+                .stream()
                 .mapToDouble(Movimiento::getMonto)
                 .sum();
+    }
+
+    public long cantidadDeDepositosA(LocalDate fecha) {
+        return getMovimientosSegun(fecha, TipoDeMovimiento.DEPOSITO)
+                .stream()
+                .count();
     }
 
     public List<Movimiento> getMovimientos() {

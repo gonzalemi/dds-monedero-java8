@@ -31,11 +31,11 @@ public class Movimiento {
         return tipo;
     }
 
-    public boolean esDeposito() {
-        return this.tipo == TipoDeMovimiento.DEPOSITO;
+    public boolean esDelTipo(TipoDeMovimiento tipo) {
+        return this.tipo == tipo;
     }
 
-    public boolean esExtraccionEnFecha(LocalDate fecha) {
-        return this.tipo == TipoDeMovimiento.EXTRACCION && this.esDeLaFecha(fecha);
+    public boolean esDeTipoYFecha(TipoDeMovimiento tipo, LocalDate fecha){
+        return esDelTipo(tipo) && esDeLaFecha(fecha);
     }
 }
