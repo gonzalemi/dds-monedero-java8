@@ -45,19 +45,19 @@ public class Cuenta {
         }
     }
 
-    public void poner(double cuanto) {
-        validarMontoNegativo(cuanto);
+    public void poner(double montoDeposito) {
+        validarMontoNegativo(montoDeposito);
         validarCantidadDeDepositosDiarios();
 
-        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.DEPOSITO);
+        agregarMovimiento(LocalDate.now(), montoDeposito, TipoDeMovimiento.DEPOSITO);
     }
 
-    public void sacar(double cuanto) {
-        validarMontoNegativo(cuanto);
-        validarSuficienciaDeSaldo(cuanto);
-        validarMontoMaximoDeExtraccionDiario(cuanto);
+    public void sacar(double montoExtraccion) {
+        validarMontoNegativo(montoExtraccion);
+        validarSuficienciaDeSaldo(montoExtraccion);
+        validarMontoMaximoDeExtraccionDiario(montoExtraccion);
 
-        agregarMovimiento(LocalDate.now(), cuanto, TipoDeMovimiento.EXTRACCION);
+        agregarMovimiento(LocalDate.now(), montoExtraccion, TipoDeMovimiento.EXTRACCION);
     }
 
     public void agregarMovimiento(LocalDate fecha, double cuanto, TipoDeMovimiento tipo) {
@@ -65,27 +65,22 @@ public class Cuenta {
         movimientos.add(movimiento);
     }
 
-    public List<Movimiento> getMovimientosSegun(LocalDate fecha, TipoDeMovimiento tipo) {
+    private List<Movimiento> getMovimientosSegun(LocalDate fecha, TipoDeMovimiento tipo) {
         return movimientos.stream()
                 .filter(movimiento -> movimiento.esDeTipoYFecha(tipo, fecha))
                 .collect(Collectors.toList());
     }
 
-    public double getMontoExtraidoA(LocalDate fecha) {
+    private double getMontoExtraidoA(LocalDate fecha) {
         return getMovimientosSegun(fecha, TipoDeMovimiento.EXTRACCION)
                 .stream()
                 .mapToDouble(Movimiento::getMonto)
                 .sum();
     }
 
-    public long cantidadDeDepositosA(LocalDate fecha) {
+    private int cantidadDeDepositosA(LocalDate fecha) {
         return getMovimientosSegun(fecha, TipoDeMovimiento.DEPOSITO)
-                .stream()
-                .count();
-    }
-
-    public List<Movimiento> getMovimientos() {
-        return movimientos;
+                .size();
     }
 
     public double getSaldo() {

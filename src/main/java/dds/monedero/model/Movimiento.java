@@ -19,16 +19,8 @@ public class Movimiento {
         return monto;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
     public boolean esDeLaFecha(LocalDate fecha) {
         return this.fecha.equals(fecha);
-    }
-
-    public TipoDeMovimiento getTipo() {
-        return tipo;
     }
 
     public boolean esDelTipo(TipoDeMovimiento tipo) {
