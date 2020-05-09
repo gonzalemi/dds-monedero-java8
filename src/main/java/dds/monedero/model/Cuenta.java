@@ -50,7 +50,8 @@ public class Cuenta {
         validarMontoNegativo(montoDeposito);
         validarCantidadDeDepositosDiarios();
 
-        agregarMovimiento(LocalDate.now(), montoDeposito, TipoDeMovimiento.DEPOSITO);
+        Movimiento movimiento = new Movimiento(LocalDate.now(), montoDeposito, TipoDeMovimiento.DEPOSITO);
+        agregarMovimiento(movimiento);
     }
 
     public void sacar(double montoExtraccion) {
@@ -58,11 +59,11 @@ public class Cuenta {
         validarSuficienciaDeSaldo(montoExtraccion);
         validarMontoMaximoDeExtraccionDiario(montoExtraccion);
 
-        agregarMovimiento(LocalDate.now(), -montoExtraccion, TipoDeMovimiento.EXTRACCION);
+        Movimiento movimiento = new Movimiento(LocalDate.now(), -montoExtraccion, TipoDeMovimiento.EXTRACCION);
+        agregarMovimiento(movimiento);
     }
 
-    public void agregarMovimiento(LocalDate fecha, double cuanto, TipoDeMovimiento tipo) {
-        Movimiento movimiento = new Movimiento(fecha, cuanto, tipo);
+    public void agregarMovimiento(Movimiento movimiento) {
         movimientos.add(movimiento);
     }
 
